@@ -186,18 +186,16 @@ int main()
     // após a hora de partida do seu itinerário original
     for(int p = 0; p < numDePassageiros; p++)
     {
-        IloExpr expr1(env);
-        IloExpr expr2(env);
+        IloExpr expr(env);
         for(int v = 0; v < numDeVoos; v++)
         {
             if(AOv[v] == 0)
             {
-                expr1 += (HPv[v] * y[p][v]);
+                expr += (HPv[v] * y[p][v]);
             }
         }
-        expr2 += (PARTp[p] * (1 - x[p]));
-        // todo: is getConstant() correct?
-        IloRange restricao(env, expr2.getConstant(), expr1, IloInfinity);
+        expr += (PARTp[p] * x[p]);
+        IloRange restricao(env, PARTp[p], expr, IloInfinity);
         model.add(restricao);
     }
 
