@@ -186,22 +186,73 @@ int main()
     // após a hora de partida do seu itinerário original
     for(int p = 0; p < numDePassageiros; p++)
     {
-        IloExpr expr(env);
+        IloExpr expr1(env);
+        IloExpr expr2(env);
         for(int v = 0; v < numDeVoos; v++)
         {
             if(AOv[v] == 0)
             {
-                expr += (HPv[v] * y[p][v]);
+                expr1 += (HPv[v] * y[p][v]);
             }
         }
-        // (PARTp[p] * (1 - x[p]))
-        // todo fix this: IloRange restricao(env, (PARTp[p] * (1 - x[p])), expr, IloInfinity);
-        //model.add(restricao);
+        expr2 += (PARTp[p] * (1 - x[p]));
+        // todo: is getConstant() correct?
+        IloRange restricao(env, expr2.getConstant(), expr1, IloInfinity);
+        model.add(restricao);
     }
 
     // Restricao (7) assegura que o tempo mı́nimo entre conexõesseja respeitado
+    for(int p = 0; p < numDePassageiros; p++)
+    {
+        for(int a = 0; a < numDeVoos; a++)
+        {
+            if (a != 0 && a != DESTp[p])
+            {
+                IloExpr expr1(env);
+                IloExpr expr2(env);
+                for(int v = 0; v < numDeVoos; v++)
+                {
+                    if(ADv[v] == a)
+                    {
+                        expr1 += ((HCv[v] * MNC) * y[p][v]);
+                    }
+                    if(AOv[v] == a)
+                    {
+                        expr2 += (HPv[v] * y[p][v]);
+                    }
+                }
+                // todo: is getConstant() correct?
+                IloRange restricao(env, -IloInfinity, expr1, expr2.getConstant());
+                model.add(restricao);
+            }
+        }
+    }
 
     // Restricao (8) refere-se ao tempo máximo em que uma conexão pode ocorrer
+    for(int p = 0; p < numDePassageiros; p++)
+    {
+        for(int a = 0; a < numDeVoos; a++)
+        {
+            if (a != 0 && a != DESTp[p])
+            {
+                IloExpr expr1(env);
+                IloExpr expr2(env);
+                for(int v = 0; v < numDeVoos; v++)
+                {
+                    if(AOv[v] == a)
+                    {
+                        expr1 += (HPv[v] * y[p][v]);
+                    }
+                    if(ADv[v] == a)
+                    {
+                        expr2 += (HCv[v] * y[p][v]);
+                    }
+                }
+                IloRange restricao(env, -IloInfinity, expr1 - expr2, MXC);
+                model.add(restricao);
+            }
+        }
+    }
 
     // Restricao (9) e (10) evitam a criação de ciclos em um itinerário, garantindo
     // que um passageiro não retorne a um aeroporto já visitado.
