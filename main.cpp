@@ -142,11 +142,62 @@ int main()
 
     // Restricao (4) assegura a continuidade de um itinerário durante as conexões
     // entre aeroportos
+    for(int pas = 0; pas < numDePassageiros; pas++)
+    {
+        for(int a = 0; a < numDeVoos; a++)
+        {
+            if(a != 0 && a != DESTp[pas])
+            {
+                IloExpr expr1(env);
+                IloExpr expr2(env);
+                for(int p = 0; p < numDePassageiros; p++)
+                {
+                    for(int v = 0; v < numDeVoos; v++)
+                    {
+                        if(ADv[v] == a)
+                        {
+                            expr1 += y[p][v];
+                        }
+                        if(AOv[v] == a)
+                        {
+                            expr2 += y[p][v];
+                        }
+                    }
+                }
+                IloRange restricao(env, 0, expr1 - expr2, 0);
+                model.add(restricao);
+            }
+        }
+    }
 
     // Restricao (5) certifica que um voo obedeça sua capacidade máxima
+    for(int v = 0; v < numDeVoos; v++)
+    {
+        IloExpr expr(env);
+        for(int p = 0; p < numDePassageiros; p++)
+        {
+            expr += y[p][v];
+        }
+        IloRange restricao(env, -IloInfinity, expr, CAPv[v]);
+        model.add(restricao);
+    }
 
     // Restricao (6) garante que um passageiro parta do aeroporto de origem somente
     // após a hora de partida do seu itinerário original
+    for(int p = 0; p < numDePassageiros; p++)
+    {
+        IloExpr expr(env);
+        for(int v = 0; v < numDeVoos; v++)
+        {
+            if(AOv[v] == 0)
+            {
+                expr += (HPv[v] * y[p][v]);
+            }
+        }
+        // (PARTp[p] * (1 - x[p]))
+        // todo fix this: IloRange restricao(env, (PARTp[p] * (1 - x[p])), expr, IloInfinity);
+        //model.add(restricao);
+    }
 
     // Restricao (7) assegura que o tempo mı́nimo entre conexõesseja respeitado
 
@@ -154,6 +205,46 @@ int main()
 
     // Restricao (9) e (10) evitam a criação de ciclos em um itinerário, garantindo
     // que um passageiro não retorne a um aeroporto já visitado.
+    // (9)
+    for(int pas = 0; pas < numDePassageiros; pas++)
+    {
+        for(int a = 0; a < numDeVoos; a++)
+        {
+            IloExpr expr(env);
+            for(int p = 0; p < numDePassageiros; p++)
+            {
+                for(int v = 0; v < numDeVoos; v++)
+                {
+                    if(AOv[v] == a)
+                    {
+                        expr += y[p][v];
+                    }
+                }
+            }
+            IloRange restricao(env, -IloInfinity, expr, 1);
+            model.add(restricao);
+        }
+    }
+    // (10)
+    for(int pas = 0; pas < numDePassageiros; pas++)
+    {
+        for(int a = 0; a < numDeVoos; a++)
+        {
+            IloExpr expr(env);
+            for(int p = 0; p < numDePassageiros; p++)
+            {
+                for(int v = 0; v < numDeVoos; v++)
+                {
+                    if(ADv[v] == a)
+                    {
+                        expr += y[p][v];
+                    }
+                }
+            }
+            IloRange restricao(env, -IloInfinity, expr, 1);
+            model.add(restricao);
+        }
+    }
 
     // Resolvendo o modelo
     /*
@@ -186,16 +277,3 @@ int main()
     */
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
