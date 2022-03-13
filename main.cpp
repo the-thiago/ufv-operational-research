@@ -20,33 +20,57 @@ int main()
 
     cout << endl << "Processando..." << endl;
 
-    IloEnv env;             // Declara o ambiente
-    IloModel Model(env);    // Declara o modelo dentro do ambiente
-
     // Dados do modelo
-    // todo
-
     int numDePassageiros = 2;
     int numDeVoos = 2;
-    int ATR = 100;
     int PEN = 100;
-    int* CSTv = new int[numDeVoos] { 0, 0 };
-    int* HCv = new int[numDeVoos] { 0, 0 };
-    int* ADv = new int[numDeVoos] { 0, 0 };
+    int ATR = 100;
+    int MNC = 100;
+    int MXC = 100;
     int* AOv = new int[numDeVoos] { 0, 0 };
-    int* CHEGp = new int[numDePassageiros] { 0, 0 };
+    int* ADv = new int[numDeVoos] { 0, 0 };
+    int* CAPv = new int[numDeVoos] { 0, 0 };
+    int* CSTv = new int[numDeVoos] { 0, 0 };
+    int* HPv = new int[numDeVoos] { 0, 0 };
+    int* HCv = new int[numDeVoos] { 0, 0 };
     int* DESTp = new int[numDePassageiros] { 0, 0 };
+    int* PARTp = new int[numDePassageiros] { 0, 0 };
+    int* CHEGp = new int[numDePassageiros] { 0, 0 };
 
+    // todo: ler dados e printar eles
+
+    // Declara o ambiente e o modelo matematico
+    IloEnv env;
+    IloModel model;
+    model = IloModel(env);
 
     // Variaveis de decisao binarias
     // Variavel booleana: passageiro p foi negligenciado na realocacao?
     IloNumVarArray x(env, numDePassageiros, 0, 1, IloNumVar::Bool);
+    for(int p = 0; p < numDePassageiros; p++)
+    {
+        stringstream var;
+        var << "x[" << p << "]";
+        x[p].setName(var.str().c_str());
+        model.add(x[p]);
+    }
+
     // Variavel booleana de duas dimensoes: passageiro p está alocado ao voo v?
     Var2D y(env, numDePassageiros);
 
     for(int p = 0; p < numDePassageiros; p++)
     {
         y[p] = IloNumVarArray(env, numDeVoos, 0, 1, IloNumVar::Bool);
+    }
+    for(int p = 0; p < numDePassageiros; p++)
+    {
+        for(int v = 0; v < numDeVoos; v++)
+        {
+            stringstream var;
+            var << "y[" << p << "][" << v << "]";
+            y[p][v].setName(var.str().c_str());
+            model.add(y[p][v]);
+        }
     }
 
     // Funcao objetivo (1) ===============================================================
@@ -79,7 +103,7 @@ int main()
             }
         }
     }
-    Model.add(IloMinimize(env, custoRealocacao + penalidadeNeglig + passagInsatisfacao));
+    model.add(IloMinimize(env, custoRealocacao + penalidadeNeglig + passagInsatisfacao));
 
     // Restricoes =======================================================================
     // Restricao (2) garante que cada passageiro saia do aeroporto de origem ou, então,
@@ -95,7 +119,8 @@ int main()
             }
         }
         expr += x[p];
-        Model.add(expr == 1);
+        IloRange restricao(env, 1, expr, 1);
+        model.add(restricao);
     }
 
     // Restricao (3) impõem a condição que cada passageiro realocado chegue a seu
@@ -111,7 +136,8 @@ int main()
             }
         }
         expr += x[p];
-        Model.add(expr == 1);
+        IloRange restricao(env, 1, expr, 1);
+        model.add(restricao);
     }
 
     // Restricao (4) assegura a continuidade de um itinerário durante as conexões
@@ -131,7 +157,7 @@ int main()
 
     // Resolvendo o modelo
     /*
-    IloCplex cplex(Model);
+    IloCplex cplex(model);
     cplex.exportModel("ModeloExportado.lp");
     if(!cplex.solve())
     {
