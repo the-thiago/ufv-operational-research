@@ -219,8 +219,7 @@ int main()
                         expr2 += (HPv[v] * y[p][v]);
                     }
                 }
-                // todo: is getConstant() correct?
-                IloRange restricao(env, -IloInfinity, expr1, expr2.getConstant());
+                IloRange restricao(env, -IloInfinity, expr1 / expr2, 1);
                 model.add(restricao);
             }
         }
