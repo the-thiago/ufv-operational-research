@@ -5,6 +5,21 @@ using namespace std;
 
 typedef IloArray<IloNumVarArray> Var2D; // Nos permite definir variaveis de decisão 2D
 
+void printa(string nome, int valor)
+{
+    cout << nome << ": " << valor << endl;
+}
+
+void printa(string nome, int* valores, int tam)
+{
+    cout << nome << ": ";
+    for(int i = 0; i < tam; i++)
+    {
+        cout << valores[i] << " ";
+    }
+    cout << endl;
+}
+
 int main()
 {
     string escolha = "";
@@ -18,26 +33,40 @@ int main()
     }
     while(escolha != "1" && escolha != "2");
 
-    cout << endl << "Processando..." << endl;
-
     // Dados do modelo
     int numDePassageiros = 2;
     int numDeVoos = 2;
     int PEN = 100;
-    int ATR = 100;
-    int MNC = 100;
-    int MXC = 100;
-    int* AOv = new int[numDeVoos] { 0, 0 };
-    int* ADv = new int[numDeVoos] { 0, 0 };
-    int* CAPv = new int[numDeVoos] { 0, 0 };
-    int* CSTv = new int[numDeVoos] { 0, 0 };
-    int* HPv = new int[numDeVoos] { 0, 0 };
-    int* HCv = new int[numDeVoos] { 0, 0 };
-    int* DESTp = new int[numDePassageiros] { 0, 0 };
-    int* PARTp = new int[numDePassageiros] { 0, 0 };
-    int* CHEGp = new int[numDePassageiros] { 0, 0 };
+    int ATR = 200;
+    int MNC = 300;
+    int MXC = 400;
+    int* AOv = new int[numDeVoos] { 0, 1 };
+    int* ADv = new int[numDeVoos] { 2, 3 };
+    int* CAPv = new int[numDeVoos] { 4, 5 };
+    int* CSTv = new int[numDeVoos] { 6, 7 };
+    int* HPv = new int[numDeVoos] { 8, 9 };
+    int* HCv = new int[numDeVoos] { 10, 11 };
+    int* DESTp = new int[numDePassageiros] { 12, 13 };
+    int* PARTp = new int[numDePassageiros] { 14, 15 };
+    int* CHEGp = new int[numDePassageiros] { 16, 17 };
 
-    // todo: ler dados e printar eles
+    // Printa dados
+    printa("numDePassageiros", numDePassageiros);
+    printa("numDeVoos", numDeVoos);
+    printa("PEN", PEN);
+    printa("ATR", ATR);
+    printa("MNC", MNC);
+    printa("MXC", MXC);
+    printa("AOv", AOv, numDeVoos);
+    printa("ADv", ADv, numDeVoos);
+    printa("CAPv", CAPv, numDeVoos);
+    printa("CSTv", CSTv, numDeVoos);
+    printa("HPv", HPv, numDeVoos);
+    printa("HCv", HCv, numDeVoos);
+    printa("DESTp", DESTp, numDePassageiros);
+    printa("PARTp", PARTp, numDePassageiros);
+    printa("CHEGp", CHEGp, numDePassageiros);
+    cout << endl << "Processando..." << endl;
 
     // Declara o ambiente e o modelo matematico
     IloEnv env;
