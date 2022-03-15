@@ -142,26 +142,23 @@ int main()
 
     // Restricao (4) assegura a continuidade de um itinerário durante as conexões
     // entre aeroportos
-    for(int pas = 0; pas < numDePassageiros; pas++)
+    for(int p = 0; p < numDePassageiros; p++)
     {
         for(int a = 0; a < numDeVoos; a++)
         {
-            if(a != 0 && a != DESTp[pas])
+            if(a != 0 && a != DESTp[p])
             {
                 IloExpr expr1(env);
                 IloExpr expr2(env);
-                for(int p = 0; p < numDePassageiros; p++)
+                for(int v = 0; v < numDeVoos; v++)
                 {
-                    for(int v = 0; v < numDeVoos; v++)
+                    if(ADv[v] == a)
                     {
-                        if(ADv[v] == a)
-                        {
-                            expr1 += y[p][v];
-                        }
-                        if(AOv[v] == a)
-                        {
-                            expr2 += y[p][v];
-                        }
+                        expr1 += y[p][v];
+                    }
+                    if(AOv[v] == a)
+                    {
+                        expr2 += y[p][v];
                     }
                 }
                 IloRange restricao(env, 0, expr1 - expr2, 0);
@@ -199,7 +196,7 @@ int main()
         model.add(restricao);
     }
 
-    // Restricao (7) assegura que o tempo mı́nimo entre conexõesseja respeitado
+    // Restricao (7) assegura que o tempo mı́nimo entre conexões seja respeitado
     for(int p = 0; p < numDePassageiros; p++)
     {
         for(int a = 0; a < numDeVoos; a++)
@@ -254,19 +251,16 @@ int main()
     // Restricao (9) e (10) evitam a criação de ciclos em um itinerário, garantindo
     // que um passageiro não retorne a um aeroporto já visitado.
     // (9)
-    for(int pas = 0; pas < numDePassageiros; pas++)
+    for(int p = 0; p < numDePassageiros; p++)
     {
         for(int a = 0; a < numDeVoos; a++)
         {
             IloExpr expr(env);
-            for(int p = 0; p < numDePassageiros; p++)
+            for(int v = 0; v < numDeVoos; v++)
             {
-                for(int v = 0; v < numDeVoos; v++)
+                if(AOv[v] == a)
                 {
-                    if(AOv[v] == a)
-                    {
-                        expr += y[p][v];
-                    }
+                    expr += y[p][v];
                 }
             }
             IloRange restricao(env, -IloInfinity, expr, 1);
@@ -274,19 +268,16 @@ int main()
         }
     }
     // (10)
-    for(int pas = 0; pas < numDePassageiros; pas++)
+    for(int p = 0; p < numDePassageiros; p++)
     {
         for(int a = 0; a < numDeVoos; a++)
         {
             IloExpr expr(env);
-            for(int p = 0; p < numDePassageiros; p++)
+            for(int v = 0; v < numDeVoos; v++)
             {
-                for(int v = 0; v < numDeVoos; v++)
+                if(ADv[v] == a)
                 {
-                    if(ADv[v] == a)
-                    {
-                        expr += y[p][v];
-                    }
+                    expr += y[p][v];
                 }
             }
             IloRange restricao(env, -IloInfinity, expr, 1);
@@ -310,7 +301,7 @@ int main()
     for(int p = 0; p < numDePassageiros; p++)
     {
         double xValue = cplex.getValue(x[p]);
-        count << "\t\t x[" << p << "] = " << xValue << endl;
+        cout << "\t\t x[" << p << "] = " << xValue << endl;
     }
 
     cout << "Valores de y:" << endl;
@@ -319,7 +310,7 @@ int main()
         for(int v = 0; v < numDeVoos; v++)
         {
             double yValue = cplex.getValue(y[p][v]);
-            count << "\t\t y[" << p << "][" << v << "] = " << yValue << endl;
+            cout << "\t\t y[" << p << "][" << v << "] = " << yValue << endl;
         }
     }
     */
