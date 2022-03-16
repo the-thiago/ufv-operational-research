@@ -1,7 +1,11 @@
 # depslib dependency file v1.0
-1647385488 source:/home/thiago/Documentos/projetocodeblocks/pesquisa/pesquisa/main.cpp
+1647390708 source:/home/thiago/Documentos/projetocodeblocks/pesquisa/pesquisa/main.cpp
 	<iostream>
 	<ilcplex/ilocplex.h>
+	<fstream>
+	<string>
+	<vector>
+	<sstream>
 
 1646673403 /home/thiago/CPLEX_Studio201/cplex/include/ilcplex/ilocplex.h
 	<ilconcert/ilomodel.h>

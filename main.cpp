@@ -1,5 +1,9 @@
 #include <iostream>
 #include <ilcplex/ilocplex.h>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -23,32 +27,116 @@ void printa(string nome, int* valores, int tam)
 int main()
 {
     string escolha = "";
+    string fname = "";
 
     do
     {
         cout << "Digite o numero da opcao de entrada:" << endl;
-        cout << "1 - entrada1.txt" << endl;
-        cout << "2 - entrada2.txt" << endl;
+        cout << "1 - entrada1.csv" << endl;
+        cout << "2 - entrada2.csv" << endl;
         cin >> escolha;
+        if(escolha == "1")
+        {
+            fname = "entrada1.csv";
+            break;
+        }
+        else if(escolha == "2")
+        {
+            fname = "entrada2.csv";
+            break;
+        }
     }
-    while(escolha != "1" && escolha != "2");
+    while(1);
 
-    // Dados do modelo
-    int numDePassageiros = 2;
-    int numDeVoos = 2;
-    int PEN = 100;
-    int ATR = 200;
-    int MNC = 300;
-    int MXC = 400;
-    int* AOv = new int[numDeVoos] { 0, 1 };
-    int* ADv = new int[numDeVoos] { 2, 3 };
-    int* CAPv = new int[numDeVoos] { 4, 5 };
-    int* CSTv = new int[numDeVoos] { 6, 7 };
-    int* HPv = new int[numDeVoos] { 8, 9 };
-    int* HCv = new int[numDeVoos] { 10, 11 };
-    int* DESTp = new int[numDePassageiros] { 12, 13 };
-    int* PARTp = new int[numDePassageiros] { 14, 15 };
-    int* CHEGp = new int[numDePassageiros] { 16, 17 };
+    // Definicao e leitura dos Dados do modelo
+    vector<vector<string>> content;
+    vector<string> row;
+    string line, word;
+
+    fstream file(fname, ios::in);
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
+            row.clear();
+
+            stringstream str(line);
+
+            while (getline(str, word, ','))
+            {
+                row.push_back(word);
+            }
+
+            content.push_back(row);
+        }
+    }
+    else
+    {
+        cout << "Não foi possível abrir o arquivo\n";
+        cout << "Confirme se o arquivo '"<< fname <<"' está na pasta raiz do projeto\n";
+        exit(1);
+    }
+
+    int numDePassageiros = stoi(content[0][1]);
+    int numDeVoos = stoi(content[1][1]);
+    int PEN = stoi(content[2][1]);
+    int ATR = stoi(content[3][1]);
+    int MNC = stoi(content[4][1]);
+    int MXC = stoi(content[5][1]);
+
+    int* AOv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        AOv[i] = stoi(content[6][i + 1]); // i + 1 pra ignorar a primeira coluna
+    }
+
+    int* ADv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        ADv[i] = stoi(content[7][i + 1]);
+    }
+
+    int* CAPv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        CAPv[i] = stoi(content[8][i + 1]);
+    }
+
+    int* CSTv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        CSTv[i] = stoi(content[9][i + 1]);
+    }
+
+    int* HPv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        HPv[i] = stoi(content[10][i + 1]);
+    }
+
+    int* HCv = new int[numDeVoos];
+    for (int i = 0; i < numDeVoos; i++)
+    {
+        HCv[i] = stoi(content[11][i + 1]);
+    }
+
+    int* DESTp = new int[numDePassageiros];
+    for (int i = 0; i < numDePassageiros; i++)
+    {
+        DESTp[i] = stoi(content[12][i + 1]);
+    }
+
+    int* PARTp = new int[numDePassageiros];
+    for (int i = 0; i < numDePassageiros; i++)
+    {
+        PARTp[i] = stoi(content[13][i + 1]);
+    }
+
+    int* CHEGp = new int[numDePassageiros];
+    for (int i = 0; i < numDePassageiros; i++)
+    {
+        CHEGp[i] = stoi(content[14][i + 1]);
+    }
 
     // Printa dados
     printa("numDePassageiros", numDePassageiros);
@@ -317,11 +405,12 @@ int main()
     // Resolvendo o modelo
     /*
     IloCplex cplex(model);
+
     cplex.exportModel("ModeloExportado.lp");
     if(!cplex.solve())
     {
         env.error() << "Erro ao rodar modelo!" << endl;
-        throw(-1);
+        exit(2);
     }
     double obj = cplex.getObjValue();
     cout << "Valor da FO: " << obj << endl;
