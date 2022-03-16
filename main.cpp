@@ -24,29 +24,9 @@ void printa(string nome, int* valores, int tam)
     cout << endl;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    string escolha = "";
-    string fname = "";
-
-    do
-    {
-        cout << "Digite o numero da opcao de entrada:" << endl;
-        cout << "1 - entrada1.csv" << endl;
-        cout << "2 - entrada2.csv" << endl;
-        cin >> escolha;
-        if(escolha == "1")
-        {
-            fname = "entrada1.csv";
-            break;
-        }
-        else if(escolha == "2")
-        {
-            fname = "entrada2.csv";
-            break;
-        }
-    }
-    while(1);
+    string fname = argv[1];
 
     // Definicao e leitura dos Dados do modelo
     vector<vector<string>> content;
@@ -139,6 +119,7 @@ int main()
     }
 
     // Printa dados
+    cout << "Dados de entrada\n";
     printa("numDePassageiros", numDePassageiros);
     printa("numDeVoos", numDeVoos);
     printa("PEN", PEN);
@@ -161,7 +142,7 @@ int main()
     IloModel model;
     model = IloModel(env);
 
-    // Variaveis de decisao binarias
+    // Variaveis de decisao binarias =====================================================
     // Variavel booleana: passageiro p foi negligenciado na realocacao?
     IloNumVarArray x(env, numDePassageiros, 0, 1, IloNumVar::Bool);
     for(int p = 0; p < numDePassageiros; p++)
@@ -222,7 +203,7 @@ int main()
     }
     model.add(IloMinimize(env, custoRealocacao + penalidadeNeglig + passagInsatisfacao));
 
-    // Restricoes =======================================================================
+    // Restricoes ========================================================================
     // Restricao (2) garante que cada passageiro saia do aeroporto de origem ou, então,
     // que seja indicada a sua não realocação
     for(int p = 0; p < numDePassageiros; p++)
@@ -333,7 +314,7 @@ int main()
                         expr2 += (HPv[v] * y[p][v]);
                     }
                 }
-                IloRange restricao(env, -IloInfinity, expr1 / expr2, 1);
+                IloRange restricao(env, -IloInfinity, expr1 - expr2, 0);
                 model.add(restricao);
             }
         }
@@ -403,17 +384,17 @@ int main()
     }
 
     // Resolvendo o modelo
-    /*
     IloCplex cplex(model);
-
     cplex.exportModel("ModeloExportado.lp");
+
     if(!cplex.solve())
     {
         env.error() << "Erro ao rodar modelo!" << endl;
         exit(2);
     }
+
     double obj = cplex.getObjValue();
-    cout << "Valor da FO: " << obj << endl;
+    cout << "\nValor da FO: " << obj << endl;
 
     cout << "Valores de x:" << endl;
     for(int p = 0; p < numDePassageiros; p++)
@@ -431,6 +412,6 @@ int main()
             cout << "\t\t y[" << p << "][" << v << "] = " << yValue << endl;
         }
     }
-    */
+
     return 0;
 }
