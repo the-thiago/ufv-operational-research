@@ -16,7 +16,7 @@ Após ter instalado o cplex em sua máquina realizar os seguintes passos:
 
 `$ make`
 
-2- Para executar o programa passamos um parâmetro com o nome do arquivo de entrada:
+3- Para executar o programa passamos um parâmetro com o nome do arquivo de entrada:
 
 `$ ./main entrada1.csv`
 
