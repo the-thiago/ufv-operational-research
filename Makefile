@@ -22,8 +22,8 @@ LIBFORMAT  = static_pic
 #
 #------------------------------------------------------------
 
-CPLEXDIR      = /home/thiago/CPLEX_Studio201/cplex
-CONCERTDIR    = /home/thiago/CPLEX_Studio201/concert
+CPLEXDIR      = /opt/ibm/ILOG/CPLEX_Studio201/cplex
+CONCERTDIR    = /opt/ibm/ILOG/CPLEX_Studio201/concert
 
 # ---------------------------------------------------------------------
 # Compiler selection 
