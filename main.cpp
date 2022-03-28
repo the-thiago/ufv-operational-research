@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
                 {
                     if(ADv[v] == a)
                     {
-                        expr1 += ((HCv[v] * MNC) * y[p][v]);
+                        expr1 += ((HCv[v] + MNC) * y[p][v]);
                     }
                     if(AOv[v] == a)
                     {
