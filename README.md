@@ -1,24 +1,28 @@
-# UFV
+# ufv-operational-research
+Contributors
 ###### - Rodrigo Oliveira - 2746
 ###### - João Vitor Azevedo - 6010
 ###### - Thiago Souza - 6011
 
-#### Trabalho executado em graduação pela disciplina de Pesquisa Operacional na Universidade Federal de Viçosa.
+#### Project developed in undergraduate course of Operational Research at the Federal University of Viçosa.
 #### Prof. Pablo Luiz Araújo Munhoz - SIN 480
 
-## COMO EXECUTAR
+## ABOUT
 
-Após ter instalado o cplex em sua máquina realizar os seguintes passos:
+In this project we implement a linear programming model from the article Relocation of passengers from flights canceled due to the closure of a transit airport (galoa-proceedings--sbpo-2021--139657.pdf).
 
-1- Abrir o arquivo Makefile e alterar a linha 25 e 26 para o enderenço de instalação do cplex e concert em sua máquina.
+## HOW TO RUN
 
-2- Com o terminal aberto na pasta do projeto, compilar o programa com a seguinte instrução:
+After installing cplex on your machine, perform the following steps:
+
+1- Open the Makefile file and change lines 25 and 26 to the address of cplex installation and concert on your machine.
+
+2- With the terminal open in the project folder, compile the program with the following instruction:
 
 `$ make`
 
-3- Para executar o programa passamos um parâmetro com o nome do arquivo de entrada:
+3- To run the program we pass a parameter with the name of the input file:
 
-`$ ./main entrada1.csv`
+`$ ./main input1.csv`
 
-`$ ./main entrada2.csv`
-
+`$ ./main input2.csv`
